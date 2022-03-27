@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ namespace DepAnalyzr.Tests;
 public class LibCBuiltScenario : IAsyncLifetime
 {
     public string TargetLibrariesBuildOutputPath { get; private set; }
+    public IReadOnlyList<string> ModulePaths { get; private set; }
 
     public async Task InitializeAsync()
     {
@@ -32,11 +34,12 @@ public class LibCBuiltScenario : IAsyncLifetime
 
         Assert.Equal(0, dotnetBuildLibCExitCode);
 
-        var expectedBuiltAssemblyPaths = new[] {'A', 'B', 'C'}
+        ModulePaths = new[] {'A', 'B', 'C'}
             .Select(x => $"DepAnalyzr.Tests.Lib{x}.dll")
-            .Select(x => Path.Combine(TargetLibrariesBuildOutputPath, x));
+            .Select(x => Path.Combine(TargetLibrariesBuildOutputPath, x))
+            .ToList();
 
-        Assert.All(expectedBuiltAssemblyPaths, path => Assert.True(File.Exists(path)));
+        Assert.All(ModulePaths, path => Assert.True(File.Exists(path)));
     }
 
     public Task DisposeAsync()
