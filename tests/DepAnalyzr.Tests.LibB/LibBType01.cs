@@ -9,4 +9,9 @@ public class LibBType01
         var libAType01 = new LibAType01();
         libAType01.DoSomething();
     }
+
+    public static double StaticDoSomething()
+    {
+        return LibAType01.StaticDoSomething();
+    }
 }

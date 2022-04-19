@@ -13,6 +13,9 @@ public class LibCBuiltScenario : IAsyncLifetime
 {
     public string TargetLibrariesBuildOutputPath { get; private set; }
     public IReadOnlyList<string> ModulePaths { get; private set; }
+    public string ModuleAPath { get; private set; }
+    public string ModuleBPath { get; private set; }
+    public string ModuleCPath { get; private set; }
 
     public async Task InitializeAsync()
     {
@@ -40,6 +43,11 @@ public class LibCBuiltScenario : IAsyncLifetime
             .ToList();
 
         Assert.All(ModulePaths, path => Assert.True(File.Exists(path)));
+
+        var index = -1;
+        ModuleAPath = ModulePaths[++index];
+        ModuleBPath = ModulePaths[++index];
+        ModuleCPath = ModulePaths[++index];
     }
 
     public Task DisposeAsync()

@@ -6,4 +6,10 @@ public class LibAType01
     {
         
     }
+    
+    public static double StaticDoSomething()
+    {
+        var r = new Random(123);
+        return r.NextDouble();
+    }
 }
