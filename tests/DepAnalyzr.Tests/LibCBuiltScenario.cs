@@ -21,8 +21,8 @@ public class LibCBuiltScenario : IAsyncLifetime
     {
         var dotNetCliPath = Environment.OSVersion.Platform switch
         {
-            PlatformID.Win32NT => @"C:\Program Files\dotnet\dotnet.exe",
-            PlatformID.Unix => throw new NotImplementedException(),
+            PlatformID.Win32NT => @"C:\Program Files\dotnet\dotnet.exe", // TODO: Drive letter shouldn't be hard coded.
+            PlatformID.Unix => "/usr/bin/dotnet", // TODO: Consider dynamic way to obtain this path.
             _ => throw new NotImplementedException()
         };
 
