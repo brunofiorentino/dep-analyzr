@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
-using static DepAnalyzr.Tests.ShellHelper;
+using static DepAnalyzr.Tests.Shared.ShellHelper;
 
 namespace DepAnalyzr.Tests;
 

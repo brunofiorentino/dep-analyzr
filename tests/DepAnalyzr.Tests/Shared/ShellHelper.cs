@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace DepAnalyzr.Tests;
+namespace DepAnalyzr.Tests.Shared;
 
 public static class ShellHelper
 {

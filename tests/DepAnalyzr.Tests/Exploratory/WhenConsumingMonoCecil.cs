@@ -2,14 +2,14 @@
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DepAnalyzr.Tests;
+namespace DepAnalyzr.Tests.Exploratory;
 
-public class WhenBuildingDependencyMatrices : IClassFixture<LibCBuiltScenario>
+public class WhenConsumingMonoCecil : IClassFixture<LibCBuiltScenario>
 {
     private readonly LibCBuiltScenario _libCBuiltScenario;
     private readonly ITestOutputHelper _testOutputHelper;
 
-    public WhenBuildingDependencyMatrices(LibCBuiltScenario libCBuiltScenario, ITestOutputHelper testOutputHelper)
+    public WhenConsumingMonoCecil(LibCBuiltScenario libCBuiltScenario, ITestOutputHelper testOutputHelper)
     {
         _libCBuiltScenario = libCBuiltScenario;
         _testOutputHelper = testOutputHelper;
