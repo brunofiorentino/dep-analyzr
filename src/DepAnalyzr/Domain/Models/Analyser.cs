@@ -1,14 +1,15 @@
 using Mono.Cecil;
+using DepAnalyzr.Utilities;
 
 namespace DepAnalyzr.Domain.Models;
 
 public static class Analyser
 {
-    public static IReadOnlyDictionary<MethodDefinition, IReadOnlySet<MethodDefinition>> AnalyseMethodDependencies(
-        ISet<TypeDefinition> typeDefSet)
+    public static IReadOnlyDictionary<string, IReadOnlySet<MethodDefinition>> 
+        AnalyseMethodDependencies(ISet<TypeDefinition> typeDefSet)
     {
-        var moduleDefSet = typeDefSet.Select(x => x.Module).ToHashSet();
-        var methodDefDependenciesByMethodDef =  new Dictionary<MethodDefinition, IReadOnlySet<MethodDefinition>>();
+        var assemblyDefSet = typeDefSet.Select(x => x.Module.Assembly.BuildKey()).ToHashSet();
+        var methodDefDependenciesByMethodDef = new Dictionary<string, IReadOnlySet<MethodDefinition>>();
 
         foreach (var typeDef in typeDefSet)
         foreach (var methodDef in typeDef.Methods)
@@ -19,19 +20,19 @@ public static class Analyser
             {
                 var instructionStr = instruction.ToString();
                 bool IsIl(string il) => instructionStr.Contains(il);
-                var isCallOrCallVirt = IsIl(": call ") || IsIl(": callvirt ");
+                var isCallOrCallVirt = IsIl(": call ") || IsIl(": callvirt ") || IsIl(": newobj ");
                 if (!isCallOrCallVirt) continue;
+
                 var dependencyMethodRef = (MethodReference)instruction.Operand;
-                if (dependencyMethodRef is not MethodDefinition dependencyMethodDef) continue;
-                
-                
-                // var isDefinedInModuleDefSet = moduleDefSet.Contains(dependencyMethodDef.Module);
-                // if (!isDefinedInModuleDefSet) continue;
-                
+                var dependencyMethodDef = dependencyMethodRef.Resolve();
+
+                var isDefinedInAssemblyDefSet = assemblyDefSet.Contains(dependencyMethodDef.Module.Assembly.BuildKey());
+                if (!isDefinedInAssemblyDefSet) continue;
+
                 dependencies.Add(dependencyMethodDef);
             }
 
-            methodDefDependenciesByMethodDef[methodDef] = dependencies;
+            methodDefDependenciesByMethodDef[methodDef.BuildKey()] = dependencies;
         }
 
         return methodDefDependenciesByMethodDef;

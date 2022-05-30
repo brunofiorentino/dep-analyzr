@@ -16,16 +16,12 @@ public class WhenConsumingMonoCecil : IClassFixture<LibCBuiltScenario>
     }
 
     [Fact(Skip = "Exploratory test")]
+    //[Fact]
     public void ExploreMonoCecilDefinitions()
     {
-        using (var moduleADef = ModuleDefinition.ReadModule(_libCBuiltScenario.ModuleAPath))
-            ListMainDefinitions(moduleADef);
-
-        using (var moduleBDef = ModuleDefinition.ReadModule(_libCBuiltScenario.ModuleBPath))
-            ListMainDefinitions(moduleBDef);
-
-        using (var moduleCDef = ModuleDefinition.ReadModule(_libCBuiltScenario.ModuleCPath))
-            ListMainDefinitions(moduleCDef);
+        ListMainDefinitions(_libCBuiltScenario.AssemblyADefinition.MainModule);
+        ListMainDefinitions(_libCBuiltScenario.AssemblyBDefinition.MainModule);
+        ListMainDefinitions(_libCBuiltScenario.AssemblyCDefinition.MainModule);
     }
 
     private void ListMainDefinitions(ModuleDefinition moduleDef)
