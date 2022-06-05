@@ -2,6 +2,9 @@
 
 public class LibAType01
 {
+    public int SomeProp { get; set; }
+    public static int StaticSomeProp { get; set; }
+    
     public void DoSomething()
     {
         

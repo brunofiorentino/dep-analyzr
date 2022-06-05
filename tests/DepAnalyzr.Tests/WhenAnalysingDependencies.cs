@@ -1,46 +1,105 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using DepAnalyzr.Domain.Models;
-using Mono.Cecil;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace DepAnalyzr.Tests;
 
-public class WhenAnalysingDependencies : IClassFixture<LibCBuiltScenario>
+public class WhenAnalysingDependencies : IClassFixture<LibCAnalysedScenario>
 {
-    private readonly LibCBuiltScenario _libCBuiltScenario;
+    private readonly LibCAnalysedScenario _libCAnalysedScenario;
     private readonly ITestOutputHelper _testOutputHelper;
 
-    public WhenAnalysingDependencies(LibCBuiltScenario libCBuiltScenario, ITestOutputHelper testOutputHelper)
+    public WhenAnalysingDependencies
+    (
+        LibCAnalysedScenario libCAnalysedScenario,
+        ITestOutputHelper testOutputHelper
+    )
     {
-        _libCBuiltScenario = libCBuiltScenario;
+        _libCAnalysedScenario = libCAnalysedScenario;
         _testOutputHelper = testOutputHelper;
     }
 
     [Fact]
-    public void ExploreMonoCecilDefinitions()
+    public void ExpectedMethodDependenciesAreDetected()
     {
-        var libAType01 = _libCBuiltScenario.AssemblyADefinition.MainModule.Types.Single(x => x.Name == "LibAType01");
-        var libBType01 = _libCBuiltScenario.AssemblyBDefinition.MainModule.Types.Single(x => x.Name == "LibBType01");
-        var libCType01 = _libCBuiltScenario.AssemblyCDefinition.MainModule.Types.Single(x => x.Name == "LibCType01");
-        var typeDefSet = new HashSet<TypeDefinition>(new[] { libAType01, libBType01, libCType01 });
-        var methodDefDependenciesByMethodDef = Analyser.AnalyseMethodDependencies(typeDefSet);
+        var methodDependencies = _libCAnalysedScenario
+            .AnalysisResult
+            .MethodDefDependenciesByKey["System.Void DepAnalyzr.Tests.LibC.LibCType01::DoSomething()"];
 
-        Assert.NotEmpty(methodDefDependenciesByMethodDef);
-        _testOutputHelper.WriteLine($"num: {methodDefDependenciesByMethodDef.Count}");
+        Assert.Equal(7, methodDependencies.Count);
 
-        foreach (var kvp in methodDefDependenciesByMethodDef)
+        Assert.Contains(methodDependencies,
+            x => x == "System.Double DepAnalyzr.Tests.LibA.LibAType01::StaticDoSomething()");
+
+        Assert.Contains(methodDependencies,
+            x => x == "System.Int32 DepAnalyzr.Tests.LibA.LibAType01::get_StaticSomeProp()");
+
+        Assert.Contains(methodDependencies, x => x == "System.Void DepAnalyzr.Tests.LibA.LibAType01::.ctor()");
+        Assert.Contains(methodDependencies, x => x == "System.Void DepAnalyzr.Tests.LibA.LibAType01::DoSomething()");
+        Assert.Contains(methodDependencies, x => x == "System.Int32 DepAnalyzr.Tests.LibA.LibAType01::get_SomeProp()");
+        Assert.Contains(methodDependencies, x => x == "System.Void DepAnalyzr.Tests.LibB.LibBType01::.ctor()");
+        Assert.Contains(methodDependencies, x => x == "System.Void DepAnalyzr.Tests.LibB.LibBType01::DoSomething()");
+    }
+
+    [Fact]
+    public void ExpectedTypeDependenciesAreDetected()
+    {
+        var typeDependencies = _libCAnalysedScenario
+            .AnalysisResult
+            .TypeDefDependenciesByKey["DepAnalyzr.Tests.LibC.LibCType01"];
+
+        Assert.Equal(2, typeDependencies.Count);
+        Assert.Contains(typeDependencies, x => x == "DepAnalyzr.Tests.LibA.LibAType01");
+        Assert.Contains(typeDependencies, x => x == "DepAnalyzr.Tests.LibB.LibBType01");
+    }
+
+    [Fact]
+    public void ExpectedAssemblyDependenciesAreDetected()
+    {
+        var assemblyDependencies = _libCAnalysedScenario
+            .AnalysisResult
+            .AssemblyDefDependenciesByKey[
+                "DepAnalyzr.Tests.LibC, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"];
+
+        Assert.Equal(2, assemblyDependencies.Count);
+        Assert.Contains(assemblyDependencies,
+            x => x == "DepAnalyzr.Tests.LibA, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+
+        Assert.Contains(assemblyDependencies,
+            x => x == "DepAnalyzr.Tests.LibB, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+    }
+
+    [Fact(Skip = "Exploratory")]
+    public void PrintDependencies()
+    {
+        var analysisResult = _libCAnalysedScenario.AnalysisResult;
+
+        foreach (var assemblyDefKey in analysisResult.AssemblyDefDependenciesByKey.Keys.OrderBy(x => x))
         {
+            var assemblyDef = analysisResult.IndexedDefinitions.AssemblyDefsByKey[assemblyDefKey];
             _testOutputHelper.WriteLine(new string('=', 80));
-            _testOutputHelper.WriteLine(kvp.Key);
-            _testOutputHelper.WriteLine(kvp.Value.Count.ToString());
+            _testOutputHelper.WriteLine(assemblyDef.Key());
 
-            foreach (var dependencyMethodDef in kvp.Value)
+            foreach (var typeDef in assemblyDef.MainModule.Types.OrderBy(x => x.FullName))
             {
                 _testOutputHelper.WriteLine(new string('-', 80));
-                _testOutputHelper.WriteLine(dependencyMethodDef.ToString());
+                _testOutputHelper.WriteLine(typeDef.Key());
+
+                foreach (var methodDef in typeDef.Methods.OrderBy(x => x.FullName))
+                {
+                    _testOutputHelper.WriteLine(new string('.', 80));
+                    _testOutputHelper.WriteLine(methodDef.Key());
+                    var methodDependencies = analysisResult.MethodDefDependenciesByKey[methodDef.Key()];
+                    _testOutputHelper.WriteLine($"{nameof(methodDependencies)}: {methodDependencies.Count}");
+
+                    foreach (var methodDependency in methodDependencies)
+                        _testOutputHelper.WriteLine(methodDependency);
+                }
             }
+
+            _testOutputHelper.WriteLine(Environment.NewLine);
+            _testOutputHelper.WriteLine(Environment.NewLine);
         }
     }
 }

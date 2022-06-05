@@ -2,64 +2,65 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
-using DepAnalyzr.Domain.Services;
-using Mono.Cecil;
 using Xunit;
-using static DepAnalyzr.Tests.Shared.ShellHelper;
+using static DepAnalyzr.Tests.ShellHelper;
 
 namespace DepAnalyzr.Tests;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 public class LibCBuiltScenario : IAsyncLifetime
 {
-    public IReadOnlyList<AssemblyDefinition> AssemblyDefinitions { get; private set; } = null!;
-    public AssemblyDefinition AssemblyADefinition { get; private set; } = null!;
-    public AssemblyDefinition AssemblyBDefinition { get; private set; } = null!;
-    public AssemblyDefinition AssemblyCDefinition { get; private set; } = null!;
+    private readonly bool _ownCts;
+    private readonly CancellationTokenSource? _cts;
 
-    public async Task InitializeAsync()
+    public LibCBuiltScenario(CancellationTokenSource? cts)
+    {
+        _ownCts = cts is null;
+        _cts = _ownCts ? new CancellationTokenSource() : cts;
+    }
+
+    public IEnumerable<string> AssemblyPaths { get; private set; } = null!;
+
+    public async Task InitializeAsync() =>
+        await GivenLibCAndDependenciesWereBuilt();
+
+    private async Task GivenLibCAndDependenciesWereBuilt()
     {
         var dotNetCliPath = Environment.OSVersion.Platform switch
         {
             PlatformID.Win32NT => Path.Combine(
-                Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.System))!, 
+                Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.System))!,
                 "Program Files\\dotnet\\dotnet.exe"),
-            
+
             PlatformID.Unix => "/usr/bin/dotnet",
-            
+
             _ => throw new NotImplementedException()
         };
 
         var libCDirectory = Path.Combine(Environment.CurrentDirectory, "../../../../", "DepAnalyzr.Tests.LibC");
         var targetLibrariesBuildOutputPath = Environment.CurrentDirectory;
-        
+
         var dotnetBuildArguments = $"build -o \"{targetLibrariesBuildOutputPath}\"";
         var dotnetBuildLibCExitCode = await ExecuteWithinDirectory(
-            libCDirectory, async () => await ExecuteProcess(dotNetCliPath, dotnetBuildArguments));
+            libCDirectory, async ct => await ExecuteProcess(dotNetCliPath, dotnetBuildArguments, ct), _cts!.Token);
 
         Assert.Equal(0, dotnetBuildLibCExitCode);
 
-        var assemblyPaths = new[] {'A', 'B', 'C'}
+        AssemblyPaths = new[] { 'A', 'B', 'C' }
             .Select(x => $"DepAnalyzr.Tests.Lib{x}.dll")
             .Select(x => Path.Combine(targetLibrariesBuildOutputPath, x))
             .ToList();
 
-        Assert.All(assemblyPaths, path => Assert.True(File.Exists(path)));
-
-        AssemblyDefinitions = MetadataLoader.LoadAssemblyDefinitions(assemblyPaths).ToList();
-        var index = -1;
-        
-        AssemblyADefinition = AssemblyDefinitions[++index];
-        AssemblyBDefinition = AssemblyDefinitions[++index];
-        AssemblyCDefinition = AssemblyDefinitions[++index];
+        Assert.All(AssemblyPaths, path => Assert.True(File.Exists(path)));
     }
 
     public Task DisposeAsync()
     {
-        foreach (var assemblyDef in AssemblyDefinitions)
-            assemblyDef.Dispose();
-        
+        if (!_ownCts) return Task.CompletedTask;
+        _cts!.Cancel();
+        _cts.Dispose();
         return Task.CompletedTask;
     }
 }
