@@ -8,7 +8,7 @@ public sealed class Analyzer
     private readonly IndexedDefinitions _indexedDefinitions;
 
     public Analyzer(IndexedDefinitions indexedDefinitions) =>
-        _indexedDefinitions = 
+        _indexedDefinitions =
             indexedDefinitions ?? throw new ArgumentNullException(nameof(indexedDefinitions));
 
     public DependencyAnalysisResult Analyse()
@@ -21,12 +21,14 @@ public sealed class Analyzer
         foreach (var assemblyDef in _indexedDefinitions.AssemblyDefsByKey.Values)
         {
             var assemblyDefDependencies = new HashSet<string>();
-            assemblyDefDependenciesByKey[assemblyDef.FullName] = assemblyDefDependencies;
+            assemblyDefDependenciesByKey[assemblyDef.Key()] = assemblyDefDependencies;
 
-            foreach (var typeDef in assemblyDef.MainModule.Types)
+            foreach (var typeDef in assemblyDef
+                         .MainModule.Types
+                         .Where(x => IndexedDefinitions.NotModuleTypeDefinitionKey(x.Key())))
             {
                 var typeDefDependencies = new HashSet<string>();
-                typeDefDependenciesByKey[typeDef.FullName] = typeDefDependencies;
+                typeDefDependenciesByKey[typeDef.Key()] = typeDefDependencies;
 
                 foreach (var methodDef in typeDef.Methods)
                 {
@@ -61,6 +63,10 @@ public sealed class Analyzer
 
         var depMethodRef = (MethodReference)instruction.Operand;
         var depMethodDef = depMethodRef.Resolve();
+
+        if (!IndexedDefinitions.NotModuleTypeDefinitionKey(depMethodDef.DeclaringType.Key()))
+            return (false, null);
+
         var depMethodAssemblyDef = depMethodDef.Module.Assembly;
         var isDefinedInAnalysisAssembliesSet = _indexedDefinitions.AssemblyDefsByKey
             .ContainsKey(depMethodAssemblyDef.Key());

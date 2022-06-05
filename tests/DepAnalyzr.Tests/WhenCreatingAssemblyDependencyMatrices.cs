@@ -7,7 +7,8 @@ using static DepAnalyzr.Tests.TestNames;
 
 namespace DepAnalyzr.Tests;
 
-public class WhenCreatingAssemblyDependencyMatrices : IClassFixture<LibCAnalysedScenario>
+[Collection(nameof(LibCAnalysedCollection))]
+public class WhenCreatingAssemblyDependencyMatrices // : IClassFixture<LibCAnalysedScenario>
 {
     private readonly LibCAnalysedScenario _libCAnalysedScenario;
     private readonly ITestOutputHelper _testOutputHelper;
