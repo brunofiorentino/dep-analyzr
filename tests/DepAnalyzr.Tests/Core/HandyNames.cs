@@ -1,6 +1,8 @@
-namespace DepAnalyzr.Tests;
+using DepAnalyzr.Core;
 
-public static class TestNames
+namespace DepAnalyzr.Tests.Core;
+
+public static class HandyNames
 {
     public const string LibAAssemblyName = "DepAnalyzr.Tests.LibA, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null";
     public const string LibAType01Name = "DepAnalyzr.Tests.LibA.LibAType01";

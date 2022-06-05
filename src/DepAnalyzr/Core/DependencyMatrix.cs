@@ -1,6 +1,6 @@
 using ConsoleTables;
 
-namespace DepAnalyzr;
+namespace DepAnalyzr.Core;
 
 public class DependencyMatrix
 {

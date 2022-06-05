@@ -1,6 +1,7 @@
+using DepAnalyzr.Utilities;
 using Mono.Cecil;
 
-namespace DepAnalyzr;
+namespace DepAnalyzr.Core;
 
 public class IndexedDefinitions
 {

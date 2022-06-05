@@ -1,4 +1,4 @@
-namespace DepAnalyzr;
+namespace DepAnalyzr.Utilities;
 
 internal static class CollectionsExtensions
 {

@@ -2,10 +2,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using DepAnalyzr.Core;
+using DepAnalyzr.Utilities;
 using Mono.Cecil;
 using Xunit;
 
-namespace DepAnalyzr.Tests;
+namespace DepAnalyzr.Tests.Core;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 public class LibCAnalysedScenario : IAsyncLifetime

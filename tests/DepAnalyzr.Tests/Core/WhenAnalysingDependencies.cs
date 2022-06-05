@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Linq;
+using DepAnalyzr.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace DepAnalyzr.Tests;
+namespace DepAnalyzr.Tests.Core;
 
 [Collection(nameof(LibCAnalysedCollection))]
 public class WhenAnalysingDependencies // : IClassFixture<LibCAnalysedScenario>

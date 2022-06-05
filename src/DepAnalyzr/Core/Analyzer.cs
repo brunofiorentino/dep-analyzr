@@ -1,7 +1,8 @@
+using DepAnalyzr.Utilities;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
-namespace DepAnalyzr;
+namespace DepAnalyzr.Core;
 
 public sealed class Analyzer
 {

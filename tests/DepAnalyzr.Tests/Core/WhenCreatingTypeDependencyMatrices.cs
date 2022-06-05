@@ -1,9 +1,10 @@
 ﻿using System.Linq;
+using DepAnalyzr.Core;
 using Xunit;
 using Xunit.Abstractions;
-using static DepAnalyzr.Tests.TestNames;
+using static DepAnalyzr.Tests.Core.HandyNames;
 
-namespace DepAnalyzr.Tests;
+namespace DepAnalyzr.Tests.Core;
 
 [Collection(nameof(LibCAnalysedCollection))]
 public class WhenCreatingTypeDependencyMatrices // : IClassFixture<LibCAnalysedScenario>

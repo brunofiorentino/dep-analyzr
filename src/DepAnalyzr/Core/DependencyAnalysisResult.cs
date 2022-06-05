@@ -1,4 +1,4 @@
-namespace DepAnalyzr;
+namespace DepAnalyzr.Core;
 
 public class DependencyAnalysisResult
 {

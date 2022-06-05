@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Xunit;
 using static DepAnalyzr.Tests.ShellHelper;
 
-namespace DepAnalyzr.Tests;
+namespace DepAnalyzr.Tests.Core;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 internal class LibCBuiltScenario : IAsyncLifetime
