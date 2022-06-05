@@ -38,6 +38,7 @@ public class WhenCreatingAssemblyDependencyMatrices
         
         using var testTextWriterOutput = new TestTextWriter(_testOutputHelper);
         depMatrix.WriteTabularTo(testTextWriterOutput);
+        // Note: dotnet test --logger "console;verbosity=detailed"
     }
 
     private static void AssertExpectedDepMatrixLengths(int length, string[,] depMatrix)
