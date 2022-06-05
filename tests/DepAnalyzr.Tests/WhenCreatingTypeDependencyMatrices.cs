@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Mono.Cecil;
+﻿using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 using static DepAnalyzr.Tests.TestNames;
@@ -27,49 +25,48 @@ public class WhenCreatingTypeDependencyMatrices // : IClassFixture<LibCAnalysedS
     public void ExpectedDependenciesAreDetected()
     {
         var analysisResult = _libCAnalysedScenario.AnalysisResult;
-        var depMatrix = DependencyMatrixView.CreateForTypes(analysisResult);
+        var depMatrix = DependencyMatrix.CreateForTypes(analysisResult);
         var defsByKey = analysisResult.IndexedDefinitions.TypeDefsByKey;
 
-        AssertExpectedDepMatrixLengths(defsByKey.Keys.Count() + 1, depMatrix);
-        AssertExpectedLabelNames(depMatrix, defsByKey);
-        AssertCellsProperlyPointDependencies(depMatrix);
+        AssertExpectedDepMatrixLengths(defsByKey.Keys.Count() + 1, depMatrix.Data);
+        AssertExpectedLabelNames(depMatrix.Data);
+        AssertCellsProperlyPointDependencies(depMatrix.Data);
+
+        using var testTextWriterOutput = new TestTextWriter(_testOutputHelper);
+        depMatrix.WriteTabularTo(testTextWriterOutput);
     }
 
-    private static void AssertExpectedDepMatrixLengths(int length, string[,] depMatrix)
+    private static void AssertExpectedDepMatrixLengths(int length, string[,] depMatrixData)
     {
-        Assert.Equal(length, depMatrix.GetLength(0));
-        Assert.Equal(length, depMatrix.GetLength(1));
+        Assert.Equal(length, depMatrixData.GetLength(0));
+        Assert.Equal(length, depMatrixData.GetLength(1));
     }
 
-    private static void AssertExpectedLabelNames
-    (
-        string[,] depMatrix,
-        IReadOnlyDictionary<string, TypeDefinition> defsByKey
-    )
+    private static void AssertExpectedLabelNames(string[,] depMatrixData)
     {
-        Assert.Null(depMatrix[0, 0]);
+        Assert.Null(depMatrixData[0, 0]);
 
-        Assert.Equal(LibAType01Name, depMatrix[0, 1]);
-        Assert.Equal(LibBType01Name, depMatrix[0, 2]);
-        Assert.Equal(LibCType01Name, depMatrix[0, 3]);
+        Assert.Equal(LibAType01Name, depMatrixData[0, 1]);
+        Assert.Equal(LibBType01Name, depMatrixData[0, 2]);
+        Assert.Equal(LibCType01Name, depMatrixData[0, 3]);
         
-        Assert.Equal(LibAType01Name, depMatrix[1, 0]);
-        Assert.Equal(LibBType01Name, depMatrix[2, 0]);
-        Assert.Equal(LibCType01Name, depMatrix[3, 0]);
+        Assert.Equal(LibAType01Name, depMatrixData[1, 0]);
+        Assert.Equal(LibBType01Name, depMatrixData[2, 0]);
+        Assert.Equal(LibCType01Name, depMatrixData[3, 0]);
     }
 
-    private static void AssertCellsProperlyPointDependencies(string[,] depMatrix)
+    private static void AssertCellsProperlyPointDependencies(string[,] depMatrixData)
     {
-        Assert.Equal(n, depMatrix[1, 1]);
-        Assert.Equal(n, depMatrix[1, 2]);
-        Assert.Equal(n, depMatrix[1, 3]);
+        Assert.Equal(No, depMatrixData[1, 1]);
+        Assert.Equal(No, depMatrixData[1, 2]);
+        Assert.Equal(No, depMatrixData[1, 3]);
 
-        Assert.Equal(y, depMatrix[2, 1]);
-        Assert.Equal(n, depMatrix[2, 2]);
-        Assert.Equal(n, depMatrix[2, 3]);
+        Assert.Equal(Yes, depMatrixData[2, 1]);
+        Assert.Equal(No, depMatrixData[2, 2]);
+        Assert.Equal(No, depMatrixData[2, 3]);
 
-        Assert.Equal(y, depMatrix[3, 1]);
-        Assert.Equal(y, depMatrix[3, 2]);
-        Assert.Equal(n, depMatrix[3, 3]);
+        Assert.Equal(Yes, depMatrixData[3, 1]);
+        Assert.Equal(Yes, depMatrixData[3, 2]);
+        Assert.Equal(No, depMatrixData[3, 3]);
     }
 }

@@ -27,12 +27,15 @@ public class WhenCreatingAssemblyDependencyMatrices // : IClassFixture<LibCAnaly
     public void ExpectedDependenciesAreDetected()
     {
         var analysisResult = _libCAnalysedScenario.AnalysisResult;
-        var depMatrix = DependencyMatrixView.CreateForAssemblies(analysisResult);
+        var depMatrix = DependencyMatrix.CreateForAssemblies(analysisResult);
         var defsByKey = analysisResult.IndexedDefinitions.AssemblyDefsByKey;
 
-        AssertExpectedDepMatrixLengths(defsByKey.Keys.Count() + 1, depMatrix);
-        AssertExpectedLabelNames(depMatrix, defsByKey);
-        AssertCellsProperlyPointDependencies(depMatrix);
+        AssertExpectedDepMatrixLengths(defsByKey.Keys.Count() + 1, depMatrix.Data);
+        AssertExpectedLabelNames(depMatrix.Data, defsByKey);
+        AssertCellsProperlyPointDependencies(depMatrix.Data);
+        
+        using var testTextWriterOutput = new TestTextWriter(_testOutputHelper);
+        depMatrix.WriteTabularTo(testTextWriterOutput);
     }
 
     private static void AssertExpectedDepMatrixLengths(int length, string[,] depMatrix)
@@ -52,7 +55,7 @@ public class WhenCreatingAssemblyDependencyMatrices // : IClassFixture<LibCAnaly
         var libAAssemblyFriendlyName = defsByKey[LibAAssemblyName].Name.Name;
         var libBAssemblyFriendlyName = defsByKey[LibBAssemblyName].Name.Name;
         var libCAssemblyFriendlyName = defsByKey[LibCAssemblyName].Name.Name;
-        
+
         Assert.Equal(libAAssemblyFriendlyName, depMatrix[0, 1]);
         Assert.Equal(libBAssemblyFriendlyName, depMatrix[0, 2]);
         Assert.Equal(libCAssemblyFriendlyName, depMatrix[0, 3]);
@@ -64,16 +67,16 @@ public class WhenCreatingAssemblyDependencyMatrices // : IClassFixture<LibCAnaly
 
     private static void AssertCellsProperlyPointDependencies(string[,] depMatrix)
     {
-        Assert.Equal(n, depMatrix[1, 1]);
-        Assert.Equal(n, depMatrix[1, 2]);
-        Assert.Equal(n, depMatrix[1, 3]);
+        Assert.Equal(No, depMatrix[1, 1]);
+        Assert.Equal(No, depMatrix[1, 2]);
+        Assert.Equal(No, depMatrix[1, 3]);
 
-        Assert.Equal(y, depMatrix[2, 1]);
-        Assert.Equal(n, depMatrix[2, 2]);
-        Assert.Equal(n, depMatrix[2, 3]);
+        Assert.Equal(Yes, depMatrix[2, 1]);
+        Assert.Equal(No, depMatrix[2, 2]);
+        Assert.Equal(No, depMatrix[2, 3]);
 
-        Assert.Equal(y, depMatrix[3, 1]);
-        Assert.Equal(y, depMatrix[3, 2]);
-        Assert.Equal(n, depMatrix[3, 3]);
+        Assert.Equal(Yes, depMatrix[3, 1]);
+        Assert.Equal(Yes, depMatrix[3, 2]);
+        Assert.Equal(No, depMatrix[3, 3]);
     }
 }

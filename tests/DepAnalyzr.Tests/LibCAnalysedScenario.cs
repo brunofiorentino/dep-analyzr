@@ -25,7 +25,6 @@ public class LibCAnalysedScenario : IAsyncLifetime
     public async Task InitializeAsync()
     {
         await _libCBuiltScenario.InitializeAsync();
-
         _assemblyDefs = _libCBuiltScenario.AssemblyPaths.Select(AssemblyDefinition.ReadAssembly).ToArray();
         
         var typeDefs = _assemblyDefs

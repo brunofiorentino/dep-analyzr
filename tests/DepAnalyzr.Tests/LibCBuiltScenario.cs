@@ -59,8 +59,10 @@ internal class LibCBuiltScenario : IAsyncLifetime
     public Task DisposeAsync()
     {
         if (!_ownCts) return Task.CompletedTask;
+        
         _cts!.Cancel();
         _cts.Dispose();
+        
         return Task.CompletedTask;
     }
 }

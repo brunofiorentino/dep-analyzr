@@ -12,8 +12,8 @@ public static class TestNames
     public const string LibCType01Name = "DepAnalyzr.Tests.LibC.LibCType01";
 
     // ReSharper disable once InconsistentNaming
-    public const string y = nameof(y);
+    public const string Yes = DependencyMatrix.Yes;
 
     // ReSharper disable once InconsistentNaming
-    public const string n = nameof(n);
+    public const string No = DependencyMatrix.No;
 }
