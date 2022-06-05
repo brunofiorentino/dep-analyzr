@@ -22,7 +22,7 @@ public class LibCAnalysedScenario : IAsyncLifetime
         _libCBuiltScenario = new LibCBuiltScenario(_cts);
     }
 
-    public DependencyAnalysisResult AnalysisResult { get; private set; } = null!;
+    public AnalysisResult AnalysisResult { get; private set; } = null!;
 
     public async Task InitializeAsync()
     {
@@ -37,7 +37,7 @@ public class LibCAnalysedScenario : IAsyncLifetime
         var indexedDefinitions = IndexedDefinitions.Create(typeDefs);
         var analyser = new Analyzer(indexedDefinitions);
 
-        AnalysisResult = analyser.Analyse();
+        AnalysisResult = analyser.Analyze();
     }
 
     public async Task DisposeAsync()

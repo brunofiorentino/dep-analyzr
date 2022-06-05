@@ -2,7 +2,7 @@ using System.IO;
 using System.Text;
 using Xunit.Abstractions;
 
-namespace DepAnalyzr.Tests;
+namespace DepAnalyzr.Tests.TestUtilities;
 
 public class TestTextWriter : TextWriter
 {

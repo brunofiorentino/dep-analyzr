@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using DepAnalyzr.Core;
+using DepAnalyzr.Tests.TestUtilities;
 using Mono.Cecil;
 using Xunit;
 using Xunit.Abstractions;

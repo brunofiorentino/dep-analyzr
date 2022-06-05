@@ -12,7 +12,7 @@ public sealed class Analyzer
         _indexedDefinitions =
             indexedDefinitions ?? throw new ArgumentNullException(nameof(indexedDefinitions));
 
-    public DependencyAnalysisResult Analyse()
+    public AnalysisResult Analyze()
     {
         Dictionary<string, IReadOnlySet<string>>
             methodDefDependenciesByKey = new(),
@@ -49,7 +49,7 @@ public sealed class Analyzer
             }
         }
 
-        return new DependencyAnalysisResult(
+        return new AnalysisResult(
             _indexedDefinitions, methodDefDependenciesByKey,
             typeDefDependenciesByKey, assemblyDefDependenciesByKey);
     }

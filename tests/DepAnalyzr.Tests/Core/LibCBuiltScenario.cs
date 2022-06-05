@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
-using static DepAnalyzr.Tests.ShellHelper;
+using static DepAnalyzr.Tests.TestUtilities.ShellHelper;
 
 namespace DepAnalyzr.Tests.Core;
 

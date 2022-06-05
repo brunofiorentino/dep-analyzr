@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using DepAnalyzr.Core;
+using DepAnalyzr.Tests.TestUtilities;
 using Xunit;
 using Xunit.Abstractions;
 using static DepAnalyzr.Tests.Core.HandyNames;

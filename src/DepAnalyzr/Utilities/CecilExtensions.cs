@@ -2,7 +2,7 @@ using Mono.Cecil;
 
 namespace DepAnalyzr.Utilities;
 
-internal static class MonoCecilExtensions
+internal static class CecilExtensions
 {
     public static string Key(this MethodDefinition @this) => @this.ToString()!;
     public static string Key(this TypeDefinition @this) => @this.ToString()!;

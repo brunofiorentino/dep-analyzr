@@ -1,8 +1,8 @@
 namespace DepAnalyzr.Core;
 
-public class DependencyAnalysisResult
+public class AnalysisResult
 {
-    public DependencyAnalysisResult
+    public AnalysisResult
     (
         IndexedDefinitions indexedDefinitions,
         IReadOnlyDictionary<string, IReadOnlySet<string>> methodDefDependenciesByKey,
@@ -16,8 +16,8 @@ public class DependencyAnalysisResult
         AssemblyDefDependenciesByKey = assemblyDefDependenciesByKey;
     }
 
-    public IndexedDefinitions IndexedDefinitions { get; private set; }
-    public IReadOnlyDictionary<string, IReadOnlySet<string>> MethodDefDependenciesByKey { get; private set; }
-    public IReadOnlyDictionary<string, IReadOnlySet<string>> TypeDefDependenciesByKey { get; private set; }
-    public IReadOnlyDictionary<string, IReadOnlySet<string>> AssemblyDefDependenciesByKey { get; private set; }
+    public IndexedDefinitions IndexedDefinitions { get; }
+    public IReadOnlyDictionary<string, IReadOnlySet<string>> MethodDefDependenciesByKey { get; }
+    public IReadOnlyDictionary<string, IReadOnlySet<string>> TypeDefDependenciesByKey { get; }
+    public IReadOnlyDictionary<string, IReadOnlySet<string>> AssemblyDefDependenciesByKey { get; }
 }

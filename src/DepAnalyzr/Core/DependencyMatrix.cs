@@ -32,7 +32,7 @@ public class DependencyMatrix
         tabularWriter.Write();
     }
 
-    public static DependencyMatrix CreateForAssemblies(DependencyAnalysisResult analysisResult)
+    public static DependencyMatrix CreateForAssemblies(AnalysisResult analysisResult)
     {
         var dependenciesByKey = analysisResult.AssemblyDefDependenciesByKey;
         var defsByKey = analysisResult.IndexedDefinitions.AssemblyDefsByKey;
@@ -41,7 +41,7 @@ public class DependencyMatrix
         return new DependencyMatrix(depMatrix);
     }
 
-    public static DependencyMatrix CreateForTypes(DependencyAnalysisResult analysisResult)
+    public static DependencyMatrix CreateForTypes(AnalysisResult analysisResult)
     {
         var dependenciesByKey = analysisResult.TypeDefDependenciesByKey;
         var defsByKey = analysisResult.IndexedDefinitions.TypeDefsByKey;

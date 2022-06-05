@@ -17,9 +17,9 @@ public class IndexedDefinitions
         AssemblyDefsByKey = assemblyDefsByKey;
     }
 
-    public IReadOnlyDictionary<string, MethodDefinition> MethodDefsByKey { get; private set; }
-    public IReadOnlyDictionary<string, TypeDefinition> TypeDefsByKey { get; private set; }
-    public IReadOnlyDictionary<string, AssemblyDefinition> AssemblyDefsByKey { get; private set; }
+    public IReadOnlyDictionary<string, MethodDefinition> MethodDefsByKey { get; }
+    public IReadOnlyDictionary<string, TypeDefinition> TypeDefsByKey { get; }
+    public IReadOnlyDictionary<string, AssemblyDefinition> AssemblyDefsByKey { get; }
 
     public static IndexedDefinitions Create(IReadOnlyCollection<TypeDefinition> typeDefs)
     {
