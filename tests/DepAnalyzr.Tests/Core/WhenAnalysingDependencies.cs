@@ -7,7 +7,7 @@ using Xunit.Abstractions;
 namespace DepAnalyzr.Tests.Core;
 
 [Collection(nameof(LibCAnalysedCollection))]
-public class WhenAnalysingDependencies // : IClassFixture<LibCAnalysedScenario>
+public class WhenAnalysingDependencies 
 {
     private readonly LibCAnalysedScenario _libCAnalysedScenario;
     private readonly ITestOutputHelper _testOutputHelper;

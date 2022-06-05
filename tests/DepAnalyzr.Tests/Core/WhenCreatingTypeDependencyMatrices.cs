@@ -7,7 +7,7 @@ using static DepAnalyzr.Tests.Core.HandyNames;
 namespace DepAnalyzr.Tests.Core;
 
 [Collection(nameof(LibCAnalysedCollection))]
-public class WhenCreatingTypeDependencyMatrices // : IClassFixture<LibCAnalysedScenario>
+public class WhenCreatingTypeDependencyMatrices
 {
     private readonly LibCAnalysedScenario _libCAnalysedScenario;
     private readonly ITestOutputHelper _testOutputHelper;

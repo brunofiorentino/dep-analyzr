@@ -9,7 +9,7 @@ using static DepAnalyzr.Tests.Core.HandyNames;
 namespace DepAnalyzr.Tests.Core;
 
 [Collection(nameof(LibCAnalysedCollection))]
-public class WhenCreatingAssemblyDependencyMatrices // : IClassFixture<LibCAnalysedScenario>
+public class WhenCreatingAssemblyDependencyMatrices
 {
     private readonly LibCAnalysedScenario _libCAnalysedScenario;
     private readonly ITestOutputHelper _testOutputHelper;
