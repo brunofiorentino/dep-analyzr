@@ -10,7 +10,7 @@ using static DepAnalyzr.Tests.ShellHelper;
 namespace DepAnalyzr.Tests;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class LibCBuiltScenario : IAsyncLifetime
+internal class LibCBuiltScenario : IAsyncLifetime
 {
     private readonly bool _ownCts;
     private readonly CancellationTokenSource? _cts;

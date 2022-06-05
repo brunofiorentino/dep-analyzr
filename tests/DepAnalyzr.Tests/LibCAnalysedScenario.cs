@@ -7,11 +7,6 @@ using Xunit;
 
 namespace DepAnalyzr.Tests;
 
-[CollectionDefinition(nameof(LibCAnalysedCollection))]
-public class LibCAnalysedCollection : ICollectionFixture<LibCAnalysedScenario>
-{
-}
-
 // ReSharper disable once ClassNeverInstantiated.Global
 public class LibCAnalysedScenario : IAsyncLifetime
 {
@@ -32,10 +27,10 @@ public class LibCAnalysedScenario : IAsyncLifetime
         await _libCBuiltScenario.InitializeAsync();
 
         _assemblyDefs = _libCBuiltScenario.AssemblyPaths.Select(AssemblyDefinition.ReadAssembly).ToArray();
+        
         var typeDefs = _assemblyDefs
             .Select(x => x.MainModule)
             .SelectMany(x => x.Types)
-            .Where(x => IndexedDefinitions.NotModuleTypeDefinitionKey(x.Key()))
             .ToArray();
 
         var indexedDefinitions = IndexedDefinitions.Create(typeDefs);
