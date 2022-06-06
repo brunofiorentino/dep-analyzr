@@ -13,7 +13,7 @@ internal class DependencyGraph
     private DependencyGraph(BidirectionalGraph<string, Edge<string>> data) =>
         _data = data;
 
-    public string ToGraphvizDotFormat() => _data.ToGraphviz(ga =>
+    public string ToGraphvizDot() => _data.ToGraphviz(ga =>
     {
         ga.FormatVertex += (_, args) =>
         {
@@ -22,22 +22,22 @@ internal class DependencyGraph
         };
     });
 
-    public string ToGraphvizSvgFormat()
+    public string ToGraphvizSvg()
     {
-        var dotFormatGraph = ToGraphvizDotFormat();
-        var dotFormatGraphEscapedForBash = dotFormatGraph
+        var dotGraph = ToGraphvizDot();
+        var dotGraphEscapedForBash = dotGraph
             .Replace("\"", "\\\"")
             .Replace(Environment.NewLine, string.Empty);
 
         const string bash = "/usr/bin/bash";
-        var args = $"-c \"echo '{dotFormatGraphEscapedForBash}' | dot -Tsvg\"";
+        var args = $"-c \"echo '{dotGraphEscapedForBash}' | dot -Tsvg\"";
         var (exitCode, stdOutput, stdError) = ShellExecutor.ExecuteProcessReadingStreams(bash, args);
         var succeeded = exitCode == 0;
-        var svgFormatGraph = succeeded 
-            ? stdOutput 
+        var svgGraph = succeeded
+            ? stdOutput
             : throw new Exception($"Graph svg generation error: {stdError}");
 
-        return svgFormatGraph;
+        return svgGraph;
     }
 
     public static DependencyGraph CreateForAssemblies(AnalysisResult analysisResult, string? pattern)
@@ -58,7 +58,8 @@ internal class DependencyGraph
         (
             analysisResult.IndexedDefinitions.TypeDefsByKey.Select(x => x.Key).ToHashSet(),
             analysisResult.TypeDefDependenciesByKey,
-            x => analysisResult.IndexedDefinitions.TypeDefsByKey[x].FullName
+            // x => analysisResult.IndexedDefinitions.TypeDefsByKey[x].FullName
+            x => x
         );
 
         return Create(friendlyDefKeys, friendlyDefDependenciesByKey, pattern);
@@ -99,13 +100,22 @@ internal class DependencyGraph
             .Each(x => graph.AddVertex(x));
 
         graph.Vertices
-            .Select(key => (dependentKey: key, dependencyKeys: friendlyDefDependenciesByKey[key]))
+            // TODO: Scan *nested types* in order to remove the following conditional:
+            // .Select(key => (dependentKey: key, dependencyKeys: friendlyDefDependenciesByKey[key]))
+            .Select(key => (
+                dependentKey: key,
+                dependencyKeys: friendlyDefDependenciesByKey.TryGetValue(key, out var dependencyKeys)
+                    ? dependencyKeys
+                    : new HashSet<string>()))
             .Select(x => (
                 x.dependentKey,
                 dependencyKeys: x.dependencyKeys.Where(y => patternRegex?.IsMatch(y) ?? true)))
             .Where(x => x.dependencyKeys.Any())
             .SelectMany(x => x.dependencyKeys.Select(y => (x.dependentKey, dependencyKey: y)))
+            // TODO: Scan *nested types* in order to remove the following conditional/filter:
+            .Where(x => graph.Vertices.Contains(x.dependentKey) && graph.Vertices.Contains(x.dependencyKey))
             .Each(x => graph.AddEdge(new Edge<string>(x.dependentKey, x.dependencyKey)));
+
 
         return new DependencyGraph(graph);
     }

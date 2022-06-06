@@ -11,12 +11,12 @@ using Xunit.Abstractions;
 namespace DepAnalyzr.Tests.Application;
 
 [Collection(nameof(CommandsCollection))]
-public class WhenAnalyzingAssemblyDependencies : IClassFixture<LibCBuiltScenario>
+public class WhenGeneratingTypesDepMatrices : IClassFixture<LibCBuiltScenario>
 {
     private readonly LibCBuiltScenario _libCBuiltScenario;
     private readonly ITestOutputHelper _output;
 
-    public WhenAnalyzingAssemblyDependencies(LibCBuiltScenario libCBuiltScenario, ITestOutputHelper output)
+    public WhenGeneratingTypesDepMatrices(LibCBuiltScenario libCBuiltScenario, ITestOutputHelper output)
     {
         _libCBuiltScenario = libCBuiltScenario;
         _output = output;
@@ -25,11 +25,11 @@ public class WhenAnalyzingAssemblyDependencies : IClassFixture<LibCBuiltScenario
     [Fact]
     public void TableIsRenderedForMatchedDependentPattern()
     {
-        var dependentPattern = HandyNames.LibAAssemblyName.Split(",").First();
+        var dependentPattern = HandyNames.LibAType01Name.Split(".").Last();
         var assertionOutput = GivenCommandRan(dependentPattern, null);
 
         Assert.Contains(DependencyMatrix.FirstTableCellLabel, assertionOutput);
-        Assert.Contains(dependentPattern, assertionOutput);
+        Assert.Contains(HandyNames.LibAType01Name, assertionOutput);
         Assert.Contains("Count: 1", assertionOutput);
     }
 
@@ -37,8 +37,7 @@ public class WhenAnalyzingAssemblyDependencies : IClassFixture<LibCBuiltScenario
     public void TableIsRenderedForMatchedDependencyPattern()
     {
         const string dependentAndDependencyPattern = "LibC";
-        var assertionOutput = GivenCommandRan(
-            dependentAndDependencyPattern, dependentAndDependencyPattern);
+        var assertionOutput = GivenCommandRan(dependentAndDependencyPattern,dependentAndDependencyPattern);
 
         Assert.Contains(DependencyMatrix.FirstTableCellLabel, assertionOutput);
         Assert.DoesNotContain("LibA", assertionOutput);
@@ -63,7 +62,7 @@ public class WhenAnalyzingAssemblyDependencies : IClassFixture<LibCBuiltScenario
         using (TextWriter assertionOutput = new StringWriter(assertionOutputBuilder))
         using (TextWriter testOutput = new TestTextWriter(_output))
         using (var commandOutput = new CompositeTextWriter(new[] { assertionOutput, testOutput }))
-            new AnalyzeAssemblyCommand(commandOutput)
+            new GenerateTypesDepMatrixCommand(commandOutput)
                 .Execute("^DepAnalyzr.Tests.Lib", dependentPattern, dependencyPattern);
 
         return assertionOutputBuilder.ToString();

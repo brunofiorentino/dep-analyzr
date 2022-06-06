@@ -5,11 +5,11 @@ using Mono.Cecil;
 
 namespace DepAnalyzr.Application;
 
-public sealed class AnalyzeAssemblyCommand
+public sealed class GenerateAssembliesDepMatrixCommand
 {
     private readonly TextWriter _output;
 
-    public AnalyzeAssemblyCommand(TextWriter output) =>
+    public GenerateAssembliesDepMatrixCommand(TextWriter output) =>
         _output = output;
     
     public void Execute(string assemblyPattern, string? dependentPattern, string? dependencyPattern)

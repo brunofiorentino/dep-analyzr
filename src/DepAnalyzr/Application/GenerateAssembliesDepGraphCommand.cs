@@ -5,14 +5,14 @@ using Mono.Cecil;
 
 namespace DepAnalyzr.Application;
 
-public sealed class AnalyzeTypesCommand
+public sealed class GenerateAssembliesDepGraphCommand
 {
     private readonly TextWriter _output;
 
-    public AnalyzeTypesCommand(TextWriter output) =>
+    public GenerateAssembliesDepGraphCommand(TextWriter output) =>
         _output = output;
 
-    public void Execute(string assemblyPattern, string? dependentPattern , string? dependencyPattern)
+    public void Execute(string assemblyPattern, string? pattern, GraphFormat format)
     {
         var assemblyPatternRegEx = new Regex(assemblyPattern, RegexOptions.Compiled | RegexOptions.Singleline);
         var assemblyPaths = Directory
@@ -24,9 +24,17 @@ public sealed class AnalyzeTypesCommand
         var typeDefs = assemblyDefs.Select(x => x.MainModule).SelectMany(x => x.Types).ToArray();
         var indexedDefinitions = IndexedDefinitions.CreateFromTypeDefinitions(typeDefs);
         var analysisResult = new Analyzer(indexedDefinitions).Analyze();
-        var depMatrix = DependencyMatrix.CreateForTypes(analysisResult, dependentPattern, dependencyPattern);
-        
+        var depGraph = DependencyGraph.CreateForAssemblies(analysisResult, pattern);
+
         assemblyDefs.Each(x => x.Dispose());
-        depMatrix.WriteTabularTo(_output);
+        
+        var graph = format switch
+        {
+            GraphFormat.Svg => depGraph.ToGraphvizSvg(),
+            GraphFormat.Dot => depGraph.ToGraphvizDot(),
+            _ => throw new ArgumentOutOfRangeException($"Unexpected format '{format}'")
+        };
+
+        _output.WriteLine(graph);
     }
 }
