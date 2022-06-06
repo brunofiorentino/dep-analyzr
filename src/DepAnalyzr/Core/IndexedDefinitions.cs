@@ -3,7 +3,7 @@ using Mono.Cecil;
 
 namespace DepAnalyzr.Core;
 
-public class IndexedDefinitions
+internal sealed class IndexedDefinitions
 {
     private IndexedDefinitions
     (
@@ -21,7 +21,10 @@ public class IndexedDefinitions
     public IReadOnlyDictionary<string, TypeDefinition> TypeDefsByKey { get; }
     public IReadOnlyDictionary<string, AssemblyDefinition> AssemblyDefsByKey { get; }
 
-    public static IndexedDefinitions Create(IReadOnlyCollection<TypeDefinition> typeDefs)
+    public static IndexedDefinitions CreateFromTypeDefinitions
+    (
+        IReadOnlyCollection<TypeDefinition> typeDefs
+    )
     {
         var typeDefsByKey = typeDefs
             .Select(x => (key: x.Key(), value: x))
@@ -44,6 +47,6 @@ public class IndexedDefinitions
 
         return new IndexedDefinitions(methodDefsByKey, typeDefsByKey, assemblyDefsByKey);
     }
-    
+
     internal static bool NotModuleTypeDefinitionKey(string x) => x != "<Module>";
 }

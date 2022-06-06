@@ -1,6 +1,6 @@
 namespace DepAnalyzr.Core;
 
-public class AnalysisResult
+internal sealed class AnalysisResult
 {
     public AnalysisResult
     (

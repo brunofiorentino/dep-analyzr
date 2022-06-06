@@ -1,31 +1,28 @@
-﻿using System;
-using System.Linq;
-using DepAnalyzr.Utilities;
-using Xunit;
+﻿using Xunit;
 using Xunit.Abstractions;
 
 namespace DepAnalyzr.Tests.Core;
 
-[Collection(nameof(LibCAnalysedCollection))]
-public class WhenAnalysingDependencies 
+[Collection(nameof(LibCAnalyzedCollection))]
+public class WhenAnalyzingDependencies 
 {
-    private readonly LibCAnalysedScenario _libCAnalysedScenario;
+    private readonly LibCAnalyzedScenario _libCAnalyzedScenario;
     private readonly ITestOutputHelper _testOutputHelper;
 
-    public WhenAnalysingDependencies
+    public WhenAnalyzingDependencies
     (
-        LibCAnalysedScenario libCAnalysedScenario,
+        LibCAnalyzedScenario libCAnalyzedScenario,
         ITestOutputHelper testOutputHelper
     )
     {
-        _libCAnalysedScenario = libCAnalysedScenario;
+        _libCAnalyzedScenario = libCAnalyzedScenario;
         _testOutputHelper = testOutputHelper;
     }
 
     [Fact]
-    public void ExpectedMethodDependenciesAreDetected()
+    public void MethodDependenciesAreDetected()
     {
-        var methodDependencies = _libCAnalysedScenario
+        var methodDependencies = _libCAnalyzedScenario
             .AnalysisResult
             .MethodDefDependenciesByKey["System.Void DepAnalyzr.Tests.LibC.LibCType01::DoSomething()"];
 
@@ -45,9 +42,9 @@ public class WhenAnalysingDependencies
     }
 
     [Fact]
-    public void ExpectedTypeDependenciesAreDetected()
+    public void TypeDependenciesAreDetected()
     {
-        var typeDependencies = _libCAnalysedScenario
+        var typeDependencies = _libCAnalyzedScenario
             .AnalysisResult
             .TypeDefDependenciesByKey["DepAnalyzr.Tests.LibC.LibCType01"];
 
@@ -57,9 +54,9 @@ public class WhenAnalysingDependencies
     }
 
     [Fact]
-    public void ExpectedAssemblyDependenciesAreDetected()
+    public void AssemblyDependenciesAreDetected()
     {
-        var assemblyDependencies = _libCAnalysedScenario
+        var assemblyDependencies = _libCAnalyzedScenario
             .AnalysisResult
             .AssemblyDefDependenciesByKey[
                 "DepAnalyzr.Tests.LibC, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"];
@@ -70,38 +67,5 @@ public class WhenAnalysingDependencies
 
         Assert.Contains(assemblyDependencies,
             x => x == "DepAnalyzr.Tests.LibB, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-    }
-
-    [Fact(Skip = "Exploratory")]
-    public void PrintDependencies()
-    {
-        var analysisResult = _libCAnalysedScenario.AnalysisResult;
-
-        foreach (var assemblyDefKey in analysisResult.AssemblyDefDependenciesByKey.Keys.OrderBy(x => x))
-        {
-            var assemblyDef = analysisResult.IndexedDefinitions.AssemblyDefsByKey[assemblyDefKey];
-            _testOutputHelper.WriteLine(new string('=', 80));
-            _testOutputHelper.WriteLine(assemblyDef.Key());
-
-            foreach (var typeDef in assemblyDef.MainModule.Types.OrderBy(x => x.FullName))
-            {
-                _testOutputHelper.WriteLine(new string('-', 80));
-                _testOutputHelper.WriteLine(typeDef.Key());
-
-                foreach (var methodDef in typeDef.Methods.OrderBy(x => x.FullName))
-                {
-                    _testOutputHelper.WriteLine(new string('.', 80));
-                    _testOutputHelper.WriteLine(methodDef.Key());
-                    var methodDependencies = analysisResult.MethodDefDependenciesByKey[methodDef.Key()];
-                    _testOutputHelper.WriteLine($"{nameof(methodDependencies)}: {methodDependencies.Count}");
-
-                    foreach (var methodDependency in methodDependencies)
-                        _testOutputHelper.WriteLine(methodDependency);
-                }
-            }
-
-            _testOutputHelper.WriteLine(Environment.NewLine);
-            _testOutputHelper.WriteLine(Environment.NewLine);
-        }
     }
 }

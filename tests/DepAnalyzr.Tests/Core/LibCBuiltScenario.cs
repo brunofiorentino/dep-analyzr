@@ -10,15 +10,21 @@ using static DepAnalyzr.Tests.TestUtilities.ShellExecutor;
 namespace DepAnalyzr.Tests.Core;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-internal class LibCBuiltScenario : IAsyncLifetime
+public class LibCBuiltScenario : IAsyncLifetime
 {
     private readonly bool _ownCts;
     private readonly CancellationTokenSource? _cts;
 
-    public LibCBuiltScenario(CancellationTokenSource? cts)
+    internal LibCBuiltScenario(CancellationTokenSource? cts)
     {
-        _ownCts = cts is null;
-        _cts = _ownCts ? new CancellationTokenSource() : cts;
+        _ownCts = false;
+        _cts = cts;
+    }
+
+    public LibCBuiltScenario()
+    {
+        _ownCts = true;
+        _cts = new CancellationTokenSource();
     }
 
     public IEnumerable<string> AssemblyPaths { get; private set; } = null!;

@@ -10,19 +10,19 @@ using Xunit;
 namespace DepAnalyzr.Tests.Core;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class LibCAnalysedScenario : IAsyncLifetime
+public class LibCAnalyzedScenario : IAsyncLifetime
 {
     private readonly CancellationTokenSource _cts;
     private readonly LibCBuiltScenario _libCBuiltScenario;
     private IReadOnlyCollection<AssemblyDefinition> _assemblyDefs = null!;
 
-    public LibCAnalysedScenario()
+    public LibCAnalyzedScenario()
     {
         _cts = new CancellationTokenSource();
         _libCBuiltScenario = new LibCBuiltScenario(_cts);
     }
 
-    public AnalysisResult AnalysisResult { get; private set; } = null!;
+    internal AnalysisResult AnalysisResult { get; private set; } = null!;
 
     public async Task InitializeAsync()
     {
@@ -34,7 +34,7 @@ public class LibCAnalysedScenario : IAsyncLifetime
             .SelectMany(x => x.Types)
             .ToArray();
 
-        var indexedDefinitions = IndexedDefinitions.Create(typeDefs);
+        var indexedDefinitions = IndexedDefinitions.CreateFromTypeDefinitions(typeDefs);
         var analyser = new Analyzer(indexedDefinitions);
 
         AnalysisResult = analyser.Analyze();

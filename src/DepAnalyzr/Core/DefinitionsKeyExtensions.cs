@@ -1,8 +1,8 @@
 using Mono.Cecil;
 
-namespace DepAnalyzr.Utilities;
+namespace DepAnalyzr.Core;
 
-internal static class CecilExtensions
+internal static class DefinitionsKeyExtensions
 {
     public static string Key(this MethodDefinition @this) => @this.ToString()!;
     public static string Key(this TypeDefinition @this) => @this.ToString()!;

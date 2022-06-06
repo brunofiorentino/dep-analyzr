@@ -1,16 +1,14 @@
-using DepAnalyzr.Utilities;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
 namespace DepAnalyzr.Core;
 
-public sealed class Analyzer
+internal sealed class Analyzer
 {
     private readonly IndexedDefinitions _indexedDefinitions;
 
     public Analyzer(IndexedDefinitions indexedDefinitions) =>
-        _indexedDefinitions =
-            indexedDefinitions ?? throw new ArgumentNullException(nameof(indexedDefinitions));
+        _indexedDefinitions = indexedDefinitions;
 
     public AnalysisResult Analyze()
     {
@@ -36,9 +34,11 @@ public sealed class Analyzer
                     var methodDefDependencies = new HashSet<string>();
                     methodDefDependenciesByKey[methodDef.Key()] = methodDefDependencies;
 
+                    if (methodDef.Body?.Instructions is null) continue;
+
                     foreach (var instruction in methodDef.Body.Instructions)
                     {
-                        var (hasDependency, dependencyMethodDef) = AnalyseInstruction(instruction);
+                        var (hasDependency, dependencyMethodDef) = AnalyzeInstruction(instruction);
                         if (!hasDependency) continue;
 
                         methodDefDependencies.Add(dependencyMethodDef!.Key());
@@ -54,24 +54,18 @@ public sealed class Analyzer
             typeDefDependenciesByKey, assemblyDefDependenciesByKey);
     }
 
-    private (bool hasDependency, MethodDefinition? dependencyMethodDef) AnalyseInstruction(Instruction instruction)
+    private (bool hasDependency, MethodDefinition? dependencyMethodDef) AnalyzeInstruction(Instruction instruction)
     {
         Func<string, bool> containsByteCode = instruction.ToString().Contains;
-        var hasDependencyByteCode =
-            containsByteCode(": call ") || containsByteCode(": callvirt ") || containsByteCode(": newobj ");
-
-        if (!hasDependencyByteCode) return (false, null);
+        var depends = containsByteCode(": call ") || containsByteCode(": callvirt ") || containsByteCode(": newobj ");
+        if (!depends) return (false, null);
 
         var depMethodRef = (MethodReference)instruction.Operand;
         var depMethodDef = depMethodRef.Resolve();
-
-        if (!IndexedDefinitions.NotModuleTypeDefinitionKey(depMethodDef.DeclaringType.Key()))
-            return (false, null);
+        if (!IndexedDefinitions.NotModuleTypeDefinitionKey(depMethodDef.DeclaringType.Key())) return (false, null);
 
         var depMethodAssemblyDef = depMethodDef.Module.Assembly;
-        var isDefinedInAnalysisAssembliesSet = _indexedDefinitions.AssemblyDefsByKey
-            .ContainsKey(depMethodAssemblyDef.Key());
-
-        return isDefinedInAnalysisAssembliesSet ? (true, depMethodDef) : (false, null);
+        var isLoaded = _indexedDefinitions.AssemblyDefsByKey.ContainsKey(depMethodAssemblyDef.Key());
+        return isLoaded ? (true, depMethodDef) : (false, null);
     }
 }
