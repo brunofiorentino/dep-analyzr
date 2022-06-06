@@ -9,11 +9,7 @@ public class WhenAnalyzingDependencies
     private readonly LibCAnalyzedScenario _libCAnalyzedScenario;
     private readonly ITestOutputHelper _testOutputHelper;
 
-    public WhenAnalyzingDependencies
-    (
-        LibCAnalyzedScenario libCAnalyzedScenario,
-        ITestOutputHelper testOutputHelper
-    )
+    public WhenAnalyzingDependencies(LibCAnalyzedScenario libCAnalyzedScenario, ITestOutputHelper testOutputHelper)
     {
         _libCAnalyzedScenario = libCAnalyzedScenario;
         _testOutputHelper = testOutputHelper;

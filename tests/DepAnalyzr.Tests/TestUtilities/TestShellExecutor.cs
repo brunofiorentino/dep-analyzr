@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DepAnalyzr.Tests.TestUtilities;
 
-public static class ShellExecutor
+public static class TestShellExecutor
 {
     public static async Task<T> ExecuteWithinDirectory<T>(
         string directory, Func<CancellationToken,Task<T>> act, CancellationToken ct)

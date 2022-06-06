@@ -15,11 +15,7 @@ public class WhenCreatingAssemblyDependencyMatrices
     private readonly LibCAnalyzedScenario _libCAnalyzedScenario;
     private readonly ITestOutputHelper _output;
 
-    public WhenCreatingAssemblyDependencyMatrices
-    (
-        LibCAnalyzedScenario libCAnalyzedScenario,
-        ITestOutputHelper output
-    )
+    public WhenCreatingAssemblyDependencyMatrices(LibCAnalyzedScenario libCAnalyzedScenario, ITestOutputHelper output)
     {
         _libCAnalyzedScenario = libCAnalyzedScenario;
         _output = output;

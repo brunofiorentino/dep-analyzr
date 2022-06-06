@@ -1,2 +1,3 @@
 # dep-analizr
-It is about exploring Mono.Cecil
+DepAnalyzr is a poor man's NDepend -- actually a "toy project" to explore the great Mono.Cecil library and, who knows, maybe turn into something more serious.
+

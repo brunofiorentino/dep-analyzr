@@ -9,6 +9,8 @@
   <ItemGroup>
     <PackageReference Include="ConsoleTables" Version="2.4.2" />
     <PackageReference Include="Mono.Cecil" Version="0.11.4" />
+    <PackageReference Include="Xenko.QuickGraph" Version="3.7.0" />
+    <PackageReference Include="Xenko.QuickGraph.Graphviz" Version="3.7.0" />
   </ItemGroup>
 
 </Project>

@@ -12,11 +12,7 @@ public class WhenCreatingMethodDependencyMatrices
     private readonly LibCAnalyzedScenario _libCAnalyzedScenario;
     private readonly ITestOutputHelper _output;
 
-    public WhenCreatingMethodDependencyMatrices
-    (
-        LibCAnalyzedScenario libCAnalyzedScenario,
-        ITestOutputHelper output
-    )
+    public WhenCreatingMethodDependencyMatrices(LibCAnalyzedScenario libCAnalyzedScenario, ITestOutputHelper output)
     {
         _libCAnalyzedScenario = libCAnalyzedScenario;
         _output = output;

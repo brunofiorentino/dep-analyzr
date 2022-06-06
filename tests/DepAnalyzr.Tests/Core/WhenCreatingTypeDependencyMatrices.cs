@@ -13,11 +13,7 @@ public class WhenCreatingTypeDependencyMatrices
     private readonly LibCAnalyzedScenario _libCAnalyzedScenario;
     private readonly ITestOutputHelper _output;
 
-    public WhenCreatingTypeDependencyMatrices
-    (
-        LibCAnalyzedScenario libCAnalyzedScenario,
-        ITestOutputHelper output
-    )
+    public WhenCreatingTypeDependencyMatrices(LibCAnalyzedScenario libCAnalyzedScenario, ITestOutputHelper output)
     {
         _libCAnalyzedScenario = libCAnalyzedScenario;
         _output = output;
