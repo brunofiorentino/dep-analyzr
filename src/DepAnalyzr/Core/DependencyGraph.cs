@@ -58,6 +58,7 @@ internal class DependencyGraph
         (
             analysisResult.IndexedDefinitions.TypeDefsByKey.Select(x => x.Key).ToHashSet(),
             analysisResult.TypeDefDependenciesByKey,
+            // TODO: Scan *nested types* in order to revert to the following lambda:
             // x => analysisResult.IndexedDefinitions.TypeDefsByKey[x].FullName
             x => x
         );
