@@ -35,9 +35,9 @@ public class LibCAnalyzedScenario : IAsyncLifetime
             .ToArray();
 
         var indexedDefinitions = IndexedDefinitions.CreateFromTypeDefinitions(typeDefs);
-        var analyser = new Analyzer(indexedDefinitions);
+        var analyzer = new Analyzer(indexedDefinitions);
 
-        AnalysisResult = analyser.Analyze();
+        AnalysisResult = analyzer.Analyze();
     }
 
     public async Task DisposeAsync()
