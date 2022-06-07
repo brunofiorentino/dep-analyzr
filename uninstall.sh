@@ -1,0 +1,1 @@
+`cat ./uninstall.ps1`

@@ -1,0 +1,1 @@
+`cat ./install.ps1`

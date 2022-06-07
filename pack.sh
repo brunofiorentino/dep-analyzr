@@ -1,0 +1,1 @@
+`cat ./pack.ps1`
