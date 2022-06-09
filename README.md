@@ -1,6 +1,6 @@
 # DepAnalyzr
 
-Inspired by `NDepend`, this is a toy project to explore the `Mono.Cecil` library.
+Inspired by `NDepend`, it is a simple CLI created to explore the `Mono.Cecil` library.
 
 ## Prerequisites
 
