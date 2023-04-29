@@ -1,6 +1,6 @@
 # DepAnalyzr
 
-Inspired by `NDepend`, it is a simple CLI created to explore the `Mono.Cecil` library.
+Really poor man's NDepend, full of bugs -- and excuse to play with the Mono.Cecil library. It provides a simple CLI to generate component dependency graphs.
 
 ## Prerequisites
 
@@ -26,15 +26,3 @@ cd dapper-build
 depanalyzr types graph -a Dapper -f svg > dependencies.svg
 firefox dependencies.svg
 ```
-
-### Analyse eShopOnContainers' Catalog Microservice
-
-```
-git clone git@github.com:dotnet-architecture/eShopOnContainers.git
-dotnet build ./eShopOnContainers/src/Services/Catalog/Catalog.API/ --self-contained --use-current-runtime --output ./catalog-build
-cd ./catalog-build
-depanalyzr types graph -a Catalog -f svg > dependencies.svg
-firefox dependencies.svg
-
-```
-
